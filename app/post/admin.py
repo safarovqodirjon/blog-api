@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post, Tag, Question, Image
+from .models import Post, Tag, Question, Image, UserQAProfile
 
 
 class QuestionInline(admin.StackedInline):
@@ -26,3 +26,8 @@ class QuestionAdmin(admin.ModelAdmin):
 @admin.register(Image)
 class ImageAdmin(admin.ModelAdmin):
     list_display = ('title', 'image')
+
+
+@admin.register(UserQAProfile)
+class UserQAProfileAdmin(admin.ModelAdmin):
+    list_display = ("uuid",)

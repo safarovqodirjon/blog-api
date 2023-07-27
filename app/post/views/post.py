@@ -48,5 +48,5 @@ class PostDetailAPIView(APIView):
         post = self.get_object(uuid)
         if post is not None:
             post.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "Объект успешно удален"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"error": "Объект не найден"}, status=status.HTTP_404_NOT_FOUND)

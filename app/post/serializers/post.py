@@ -22,7 +22,6 @@ class PostSerializer(serializers.ModelSerializer):
         images_data = validated_data.pop('images', [])
         tags_data = validated_data.pop('tags', [])
 
-        # Перед созданием поста извлечем и удалем теги из validated_data
         tags = tags_data.copy()
         tags_data.clear()
 
