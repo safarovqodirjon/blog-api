@@ -22,6 +22,10 @@ class PostSerializer(serializers.ModelSerializer):
         images_data = validated_data.pop('images', [])
         tags_data = validated_data.pop('tags', [])
 
+        # Перед созданием поста извлечем и удалем теги из validated_data
+        tags = tags_data.copy()
+        tags_data.clear()
+
         post = Post.objects.create(**validated_data)
 
         for question_data in questions_data:
@@ -30,9 +34,15 @@ class PostSerializer(serializers.ModelSerializer):
         for image_data in images_data:
             Image.objects.create(post=post, **image_data)
 
-        for tag_data in tags_data:
-            tag, _ = Tag.objects.get_or_create(name=tag_data['name'])
-            post.tags.add(tag)
+        for tag_data in tags:
+            tag = None
+            if 'uuid' in tag_data:
+                tag = Tag.objects.get(uuid=tag_data['uuid'])
+            elif 'name' in tag_data:
+                tag, _ = Tag.objects.get_or_create(name=tag_data['name'])
+
+            if tag is not None:
+                post.tags.add(tag)
 
         return post
 
