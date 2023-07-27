@@ -3,9 +3,23 @@ from rest_framework.response import Response
 from rest_framework import status
 from ..models import Post
 from ..serializers import PostSerializer
+from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+
+
+class IsSuperUserOrReadOnly(IsAuthenticated):
+    def has_permission(self, request, view):
+        if request.method in ["PUT", "PATCH", "POST", "DELETE"]:
+            return request.user.is_superuser
+        return True
 
 
 class PostListCreateAPIView(APIView):
+    parser_classes = [JSONParser, FormParser, MultiPartParser]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsSuperUserOrReadOnly]
+
     def get(self, request, *args, **kwargs):
         posts = Post.objects.all()
         serializer = PostSerializer(posts, many=True)
@@ -21,6 +35,8 @@ class PostListCreateAPIView(APIView):
 
 
 class PostDetailAPIView(APIView):
+    parser_classes = [JSONParser, FormParser, MultiPartParser]
+
     def get_object(self, uuid):
         try:
             return Post.objects.get(uuid=uuid)
