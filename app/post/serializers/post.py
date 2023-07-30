@@ -2,79 +2,44 @@ from rest_framework import serializers
 from .questions import QuestionSerializer
 from .image import ImageSerializer
 from .tag import TagSerializer
-from ..models import (Post,
-                      Question,
-                      Image,
-                      Tag)
+from ..models import (Post, Question, Image, Tag)
 
 
 class PostSerializer(serializers.ModelSerializer):
-    questions = QuestionSerializer(many=True, required=False)
+    tags = serializers.SlugRelatedField(many=True, required=False, slug_field="name",
+                                        queryset=Tag.objects.filter())
     images = ImageSerializer(many=True, required=False)
-    tags = TagSerializer(many=True)
+    questions = QuestionSerializer(many=True, required=False)
 
     class Meta:
         model = Post
-        fields = ('uuid', 'title', 'owner', 'date_modified', 'date_added', 'questions', 'images', 'tags')
+        read_only_fields = ('owner',)
+        fields = ("uuid", "title", "content", "owner", "images", "tags", "questions", "date_modified", "date_added",)
+
+    def to_internal_value(self, data):
+        tags_data = data.get('tags', [])
+
+        for tag_data in tags_data:
+            if isinstance(tag_data, str):
+                tag_name = tag_data.strip().lower()
+                Tag.objects.get_or_create(name=tag_name)
+
+        return super().to_internal_value(data)
 
     def create(self, validated_data):
         questions_data = validated_data.pop('questions', [])
-        images_data = validated_data.pop('images', [])
         tags_data = validated_data.pop('tags', [])
 
-        tags = tags_data.copy()
-        tags_data.clear()
-
         post = Post.objects.create(**validated_data)
+
+        for tag_data in tags_data:
+            if isinstance(tag_data, str):
+                tag_name = tag_data.strip().lower()
+                tag, _ = Tag.objects.get_or_create(name=tag_name)
+
+        post.tags.set(tags_data)
 
         for question_data in questions_data:
             Question.objects.create(post=post, **question_data)
 
-        for image_data in images_data:
-            Image.objects.create(post=post, **image_data)
-
-        for tag_data in tags:
-            tag = None
-            if 'uuid' in tag_data:
-                tag = Tag.objects.get(uuid=tag_data['uuid'])
-            elif 'name' in tag_data:
-                tag, _ = Tag.objects.get_or_create(name=tag_data['name'])
-
-            if tag is not None:
-                post.tags.add(tag)
-
         return post
-
-    def update(self, instance, validated_data):
-        instance.title = validated_data.get('title', instance.title)
-        instance.owner = validated_data.get('owner', instance.owner)
-        instance.save()
-
-        questions_data = validated_data.get('questions')
-        if questions_data is not None:
-            instance.questions.all().delete()
-
-            for question_data in questions_data:
-                Question.objects.create(post=instance, **question_data)
-
-        images_data = validated_data.get('images')
-        if images_data is not None:
-            instance.images.all().delete()
-
-            for image_data in images_data:
-                Image.objects.create(post=instance, **image_data)
-
-        tags_data = validated_data.get('tags')
-        if tags_data is not None:
-            instance.tags.clear()
-            for tag_data in tags_data:
-                tag, _ = Tag.objects.get_or_create(name=tag_data['name'])
-                instance.tags.add(tag)
-
-        return instance
-
-    def delete(self, instance):
-        instance.questions.all().delete()
-        instance.images.all().delete()
-        instance.tags.clear()
-        instance.delete()

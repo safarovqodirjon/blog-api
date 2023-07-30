@@ -1,1 +1,1 @@
-from .post import PostDetailAPIView, PostListCreateAPIView
+from .post import ListCreateView, PostRetrieveUpdateDestroyAPIView

@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.utils.html import format_html
+
 from .models import Post, Tag, Question, Image, UserQAProfile
 
 
@@ -9,8 +11,17 @@ class QuestionInline(admin.StackedInline):
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('title', "owner", 'date_modified', 'date_added')
+    list_display = ('title', 'owner', 'date_modified', 'date_added', 'preview_images')
+    list_filter = ('owner',)
+    search_fields = ('title', 'owner__username')
     inlines = [QuestionInline]
+
+    def preview_images(self, obj):
+        images = obj.images.all()[:2]
+        previews = [f'<img src="{image.image.url}" height="50" />' for image in images]
+        return format_html(' '.join(previews))
+
+    preview_images.short_description = 'Preview Images'
 
 
 @admin.register(Tag)
@@ -25,9 +36,16 @@ class QuestionAdmin(admin.ModelAdmin):
 
 @admin.register(Image)
 class ImageAdmin(admin.ModelAdmin):
-    list_display = ('title', 'image')
+    list_display = ('title', 'preview')
+
+    def preview(self, obj):
+        return format_html('<img src="{}" height="50" />', obj.image.url)
+
+    preview.short_description = 'Preview'
 
 
 @admin.register(UserQAProfile)
-class UserQAProfileAdmin(admin.ModelAdmin):
-    list_display = ("uuid",)
+class UserQAProfileForm(admin.ModelAdmin):
+    class Meta:
+        model = UserQAProfile
+        fields = ('uuid',)

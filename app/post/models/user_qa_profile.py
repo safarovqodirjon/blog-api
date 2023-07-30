@@ -6,12 +6,10 @@ User = get_user_model()
 
 
 class UserQAProfile(BaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='qa_profiles')
-    question = models.ForeignKey('Question', on_delete=models.CASCADE)
-    answer = models.CharField(max_length=100)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    question_text = models.ForeignKey("Question", on_delete=models.CASCADE, related_name="qas")
+    selected_answer = models.PositiveSmallIntegerField(
+        choices=((1, 'Option 1'), (2, 'Option 2'), (3, 'Option 3'), (4, 'Option 4')))
 
     def __str__(self):
-        return f"{self.user.email} - {self.question.question_text}"
-
-    def get_related_post(self):
-        return self.question.post
+        return f"{self.user} answered question {self.question_text}"

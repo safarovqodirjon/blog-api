@@ -11,4 +11,5 @@ class QuestionSerializer(serializers.ModelSerializer):
                   'option1',
                   'option2',
                   'option3',
-                  'option4')
+                  'option4',
+                  "correct_option")

@@ -1,13 +1,9 @@
 from django.urls import path
-from .views import PostListCreateAPIView, PostDetailAPIView
-from .views.user_qa_profile import UserQAProfileListCreateAPIView, UserQAProfileDetailAPIView
+from . import views
 
 app_name = "post"
-
 urlpatterns = [
-    path('list/', PostListCreateAPIView.as_view(), name='post-list'),
-    path('detail/<uuid:uuid>/', PostDetailAPIView.as_view(), name='post-detail'),
+    path("posts/", views.ListCreateView.as_view(), name="post-list-create"),
+    path('posts/<uuid:pk>/', views.PostRetrieveUpdateDestroyAPIView.as_view(), name='post-retrieve-update-delete'),
 
-    path('profiles/', UserQAProfileListCreateAPIView.as_view(), name='user-profile-list'),
-    path('profiles/<int:pk>/', UserQAProfileDetailAPIView.as_view(), name='user-profile-detail'),
 ]
