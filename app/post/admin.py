@@ -11,9 +11,10 @@ class QuestionInline(admin.StackedInline):
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('title', 'owner', 'date_modified', 'date_added', 'preview_images')
+    list_display = ('uuid', 'title', 'owner', 'date_modified', 'date_added', 'preview_images')
     list_filter = ('owner',)
     search_fields = ('title', 'owner__username')
+    readonly_fields = ('uuid',)
     inlines = [QuestionInline]
 
     def preview_images(self, obj):

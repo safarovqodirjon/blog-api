@@ -1,0 +1,56 @@
+{
+    "title": "Заголовок=1",
+    "content": "Текст нового постаyfjfjfjfjf",
+    "tags": [
+        "it",
+        "programming"
+    ],
+    "questions": [
+        {
+            "question_text": "Вопрос 1",
+            "option1": "Вариант 1",
+            "option2": "Вариант 2",
+            "option3": "Вариант 3",
+            "option4": "Вариант 4",
+            "correct_option": 2
+        },
+        {
+            "question_text": "Вопрос 2",
+            "option1": "Вариант 1",
+            "option2": "Вариант 2",
+            "option3": "Вариант 3",
+            "option4": "Вариант 4",
+            "correct_option": 3
+        }
+    ]
+
+}
+#dldjkdjskjsdf
+
+{
+    "title": "Новый заголовок23",
+    "content": "Новый текст поста",
+    "tags": [
+        "it",
+        "programming"
+    ],
+    "questions": [
+        {
+            "question_text": "Новый вопрос новый",
+            "option1": "Новый вариант 1",
+            "option2": "Новый вариант 2",
+            "option3": "Новый вариант 3",
+            "option4": "Новый вариант 4",
+            "correct_option": 3
+        },
+        {
+            "uuid": "4d0539f7-46c8-415d-8825-0f38ab110108",
+            "question_text": "Новый вопрос sen uuid",
+            "option1": "Новый вариант 1",
+            "option2": "Новый вариант 2",
+            "option3": "Новый вариант 3",
+            "option4": "Новый вариант 422",
+            "correct_option": 2
+        }
+    ]
+}

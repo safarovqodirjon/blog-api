@@ -9,19 +9,14 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 
-class IsSuperUserOrReadOnly(IsAuthenticated):
-    def has_permission(self, request, view):
-        if request.method in ["PUT", "PATCH", "POST", "DELETE"]:
-            return request.user.is_superuser
-        return True
-
-
 class UserQAProfileListCreateAPIView(generics.ListCreateAPIView):
     queryset = UserQAProfile.objects.all()
     serializer_class = UserQAProfileSerializer
 
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsSuperUserOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class UserQAProfileDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
